@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Two Pane Demo</string>
+    <string name="title_delivery_detail">Delivery Detail</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="delivery_clear_cache">Clear cache</string>
+</resources>
