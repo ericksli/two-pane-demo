@@ -1,11 +1,11 @@
 package net.swiftzer.eric.twopanedemo
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import kotlinx.android.synthetic.main.activity_delivery_detail.*
+import kotlinx.android.synthetic.main.delivery_detail_activity.*
+import org.jetbrains.anko.startActivity
 
 /**
  * An activity representing a single Delivery detail screen. This
@@ -14,19 +14,22 @@ import kotlinx.android.synthetic.main.activity_delivery_detail.*
  * in a [DeliveryListActivity].
  */
 class DeliveryDetailActivity : BaseActivity() {
+    companion object {
+        private const val EXTRA_DELIVERY = "delivery"
+        fun startActivity(context: Context, delivery: Delivery) {
+            context.startActivity<DeliveryDetailActivity>(EXTRA_DELIVERY to delivery)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_delivery_detail)
-        setSupportActionBar(detail_toolbar)
+        setContentView(R.layout.delivery_detail_activity)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+        setSupportActionBar(toolbar)
+        supportActionBar?.apply {
+            setTitle(R.string.delivery_details_title)
+            setDisplayHomeAsUpEnabled(true)
         }
-
-        // Show the Up button in the action bar.
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -40,31 +43,25 @@ class DeliveryDetailActivity : BaseActivity() {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            val fragment = DeliveryDetailFragment().apply {
-                arguments = Bundle().apply {
-                    putString(DeliveryDetailFragment.ARG_ITEM_ID,
-                            intent.getStringExtra(DeliveryDetailFragment.ARG_ITEM_ID))
-                }
-            }
-
+            val delivery = requireNotNull(intent.getParcelableExtra<Delivery>(EXTRA_DELIVERY))
+            val fragment = DeliveryDetailFragment.newInstance(delivery)
             supportFragmentManager.beginTransaction()
-                    .add(R.id.delivery_detail_container, fragment)
+                    .replace(R.id.detailContainer, fragment)
                     .commit()
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) =
-            when (item.itemId) {
-                android.R.id.home -> {
-                    // This ID represents the Home or Up button. In the case of this
-                    // activity, the Up button is shown. For
-                    // more details, see the Navigation pattern on Android Design:
-                    //
-                    // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        android.R.id.home -> {
+            // This ID represents the Home or Up button. In the case of this
+            // activity, the Up button is shown. For
+            // more details, see the Navigation pattern on Android Design:
+            //
+            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
 
-                    navigateUpTo(Intent(this, DeliveryListActivity::class.java))
-                    true
-                }
-                else -> super.onOptionsItemSelected(item)
-            }
+            navigateUpTo(Intent(this, DeliveryListActivity::class.java))
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
 }

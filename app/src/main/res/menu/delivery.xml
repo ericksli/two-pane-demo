@@ -2,5 +2,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/clearCache"
-        android:title="@string/delivery_clear_cache"/>
+        android:title="@string/delivery_list_clear_cache"/>
 </menu>

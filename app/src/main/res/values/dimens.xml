@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="app_bar_height">200dp</dimen>
-    <dimen name="item_width">200dp</dimen>
+    <dimen name="delivery_list_item_horizontal_margin">16dp</dimen>
+    <dimen name="delivery_list_item_vertical_outer_margin">16dp</dimen>
+    <dimen name="delivery_list_item_vertical_inner_margin">8dp</dimen>
 </resources>

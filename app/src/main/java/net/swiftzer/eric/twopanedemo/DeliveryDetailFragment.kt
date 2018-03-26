@@ -5,9 +5,20 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.activity_delivery_detail.*
-import kotlinx.android.synthetic.main.delivery_detail.view.*
-import net.swiftzer.eric.twopanedemo.dummy.DummyContent
+import androidx.view.doOnLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.Observables
+import io.reactivex.rxkotlin.plusAssign
+import kotlinx.android.synthetic.main.delivery_detail_fragment.*
+import org.jetbrains.anko.bundleOf
 
 /**
  * A fragment representing a single Delivery detail screen.
@@ -16,43 +27,80 @@ import net.swiftzer.eric.twopanedemo.dummy.DummyContent
  * on handsets.
  */
 class DeliveryDetailFragment : Fragment() {
+    companion object {
+        private const val ARG_DELIVERY = "delivery"
+        fun newInstance(delivery: Delivery) = DeliveryDetailFragment().apply {
+            arguments = bundleOf(ARG_DELIVERY to delivery)
+        }
+    }
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private var mItem: DummyContent.DummyItem? = null
+    private lateinit var delivery: Delivery
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        delivery = requireNotNull(arguments?.getParcelable(ARG_DELIVERY))
+    }
 
-        arguments?.let {
-            if (it.containsKey(ARG_ITEM_ID)) {
-                // Load the dummy content specified by the fragment
-                // arguments. In a real-world scenario, use a Loader
-                // to load content from a content provider.
-                mItem = DummyContent.ITEM_MAP[it.getString(ARG_ITEM_ID)]
-                activity?.toolbar_layout?.title = mItem?.content
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.delivery_detail_fragment, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        Glide.with(this)
+                .load(delivery.imageUrl)
+                .apply(RequestOptions.centerCropTransform())
+                .into(thumbnail)
+        title.text = delivery.description
+
+        compositeDisposable += Observables
+                .zip(
+                        viewOnLayoutObservable(view),
+                        viewOnLayoutObservable(footerCard),
+                        googleMapObservable()
+                )
+                .subscribe { (contentView, footerCardView, googleMap) ->
+                    with(googleMap) {
+                        setPadding(0, 0, 0, contentView.height - footerCardView.y.toInt())
+                        val latLng = LatLng(delivery.location.lat, delivery.location.lng)
+                        val marker = MarkerOptions().position(latLng).title(delivery.location.address)
+                        addMarker(marker)
+                        moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
+                    }
+                }
+    }
+
+    private fun viewOnLayoutObservable(view: View) = Observable.create<View> { emitter ->
+        view.doOnLayout {
+            if (!emitter.isDisposed) {
+                emitter.onNext(it)
+                emitter.onComplete()
             }
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.delivery_detail, container, false)
-
-        // Show the dummy content as text in a TextView.
-        mItem?.let {
-            rootView.delivery_detail.text = it.details
+    private fun googleMapObservable() = Observable.create<GoogleMap> { emitter ->
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        /**
+         * Manipulates the map once available.
+         * This callback is triggered when the map is ready to be used.
+         * This is where we can add markers or lines, add listeners or move the camera. In this case,
+         * we just add a marker near Sydney, Australia.
+         * If Google Play services is not installed on the device, the user will be prompted to install
+         * it inside the SupportMapFragment. This method will only be triggered once the user has
+         * installed Google Play services and returned to the app.
+         */
+        mapFragment.getMapAsync { googleMap ->
+            if (!emitter.isDisposed) {
+                emitter.onNext(googleMap)
+                emitter.onComplete()
+            }
         }
-
-        return rootView
     }
 
-    companion object {
-        /**
-         * The fragment argument representing the item ID that this fragment
-         * represents.
-         */
-        const val ARG_ITEM_ID = "item_id"
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 }
