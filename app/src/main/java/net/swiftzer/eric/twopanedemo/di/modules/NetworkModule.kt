@@ -3,8 +3,11 @@ package net.swiftzer.eric.twopanedemo.di.modules
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
+import net.swiftzer.eric.twopanedemo.loggers.OkHttpTimberLogger
 import net.swiftzer.eric.twopanedemo.network.DeliveryApi
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -16,13 +19,20 @@ import java.util.concurrent.TimeUnit
 @Module
 class NetworkModule(private val apiEndpoint: String) {
     @Provides
-    fun provideOkHttpClient() = OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+    fun provideOkHttpClient(logger: Interceptor): OkHttpClient = OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .addInterceptor(logger)
             .build()
 
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient, moshiConverterFactory: MoshiConverterFactory, rxJava2CallAdapterFactory: RxJava2CallAdapterFactory) =
+    fun provideOkHttpLogger(): Interceptor = HttpLoggingInterceptor(OkHttpTimberLogger()).apply {
+        level = HttpLoggingInterceptor.Level.BASIC
+    }
+
+    @Provides
+    fun provideRetrofit(okHttpClient: OkHttpClient, moshiConverterFactory: MoshiConverterFactory, rxJava2CallAdapterFactory: RxJava2CallAdapterFactory): Retrofit =
             Retrofit.Builder()
                     .baseUrl(apiEndpoint)
                     .client(okHttpClient)
@@ -31,14 +41,14 @@ class NetworkModule(private val apiEndpoint: String) {
                     .build()
 
     @Provides
-    fun provideApiClient(retrofit: Retrofit) = retrofit.create(DeliveryApi::class.java)
+    fun provideApiClient(retrofit: Retrofit): DeliveryApi = retrofit.create(DeliveryApi::class.java)
 
     @Provides
-    fun provideMoshi() = Moshi.Builder().build()
+    fun provideMoshi(): Moshi = Moshi.Builder().build()
 
     @Provides
-    fun provideMoshiConverterFactory(moshi: Moshi) = MoshiConverterFactory.create(moshi)
+    fun provideMoshiConverterFactory(moshi: Moshi): MoshiConverterFactory = MoshiConverterFactory.create(moshi)
 
     @Provides
-    fun provideRxJava2CallAdapterFactory() = RxJava2CallAdapterFactory.create()
+    fun provideRxJava2CallAdapterFactory(): RxJava2CallAdapterFactory = RxJava2CallAdapterFactory.create()
 }

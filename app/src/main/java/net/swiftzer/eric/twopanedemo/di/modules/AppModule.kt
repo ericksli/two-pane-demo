@@ -9,10 +9,7 @@ import dagger.Provides
  * Created by Eric on 3/25/2018.
  */
 @Module
-class AppModule(private val application: Application) {
+class AppModule {
     @Provides
-    fun provideApplication() = application
-
-    @Provides
-    fun provideSharedPreferences() = application.getSharedPreferences("test", Context.MODE_PRIVATE)
+    fun provideSharedPreferences(application: Application) = application.getSharedPreferences("test", Context.MODE_PRIVATE)
 }

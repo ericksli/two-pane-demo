@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.delivery_list_item.*
  * Created by Eric on 3/25/2018.
  */
 class DeliveryListAdapter(
-        private val deliveries: List<Delivery>,
+        private var deliveries: List<Delivery>,
         private val onItemClickedCallback: (delivery: Delivery) -> Unit
 ) : RecyclerView.Adapter<DeliveryViewHolder>() {
     override fun getItemCount(): Int = deliveries.size
@@ -25,6 +25,11 @@ class DeliveryListAdapter(
 
     override fun onBindViewHolder(holder: DeliveryViewHolder, position: Int) {
         holder.bind(deliveries[position])
+    }
+
+    fun update(newList: List<Delivery>) {
+        deliveries = newList
+        notifyDataSetChanged()
     }
 }
 

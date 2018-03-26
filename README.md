@@ -9,6 +9,6 @@ Before building the app, you need to [obtain an API key](https://developers.goog
 Once you obtained the key, create a new file *credentials.properties* for defining the server endpoint and the key:
 
 ```
-apiEndpoint=http://127.0.0.1:8080/
+apiEndpoint=http://127.0.0.1:8080
 googleMapsApiKey=AIzaxxxxxxxxxxxxxxxxxxxxxxxx
 ```

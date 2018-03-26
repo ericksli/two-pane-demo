@@ -6,7 +6,8 @@ ext {
     targetSdkVersion = 27
     supportLibVersion = '27.1.0'
     daggerVersion = '2.13'
-    androidArchVersion = '1.0.0'
+    androidArchVersion = '1.1.1'
+    androidArchPagingVersion = '1.0.0-alpha7'
     androidKtxVersion = '0.2'
     ankoVersion = '0.10.4'
     rxJavaVersion = '2.1.9'
