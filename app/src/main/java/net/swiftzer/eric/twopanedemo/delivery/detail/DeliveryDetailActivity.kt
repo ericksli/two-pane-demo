@@ -1,10 +1,14 @@
-package net.swiftzer.eric.twopanedemo
+package net.swiftzer.eric.twopanedemo.delivery.detail
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.delivery_detail_activity.*
+import net.swiftzer.eric.twopanedemo.BaseActivity
+import net.swiftzer.eric.twopanedemo.delivery.list.DeliveryListActivity
+import net.swiftzer.eric.twopanedemo.R
+import net.swiftzer.eric.twopanedemo.network.entities.Delivery
 import org.jetbrains.anko.startActivity
 
 /**

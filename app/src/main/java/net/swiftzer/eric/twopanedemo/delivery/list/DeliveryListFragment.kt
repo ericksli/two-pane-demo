@@ -1,4 +1,4 @@
-package net.swiftzer.eric.twopanedemo
+package net.swiftzer.eric.twopanedemo.delivery.list
 
 import android.arch.lifecycle.Observer
 import android.os.Bundle
@@ -8,7 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.delivery_list_fragment.*
+import net.swiftzer.eric.twopanedemo.LinearSpacingItemDecoration
+import net.swiftzer.eric.twopanedemo.R
+import net.swiftzer.eric.twopanedemo.TwoPaneApplication
 import net.swiftzer.eric.twopanedemo.network.DeliveryApi
+import net.swiftzer.eric.twopanedemo.network.entities.Delivery
+import net.swiftzer.eric.twopanedemo.viewModelOf
 import org.jetbrains.anko.support.v4.dimen
 import javax.inject.Inject
 

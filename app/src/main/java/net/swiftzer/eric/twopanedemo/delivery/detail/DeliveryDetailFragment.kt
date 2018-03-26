@@ -1,4 +1,4 @@
-package net.swiftzer.eric.twopanedemo
+package net.swiftzer.eric.twopanedemo.delivery.detail
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.view.doOnLayout
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -18,6 +17,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.delivery_detail_fragment.*
+import net.swiftzer.eric.twopanedemo.GlideApp
+import net.swiftzer.eric.twopanedemo.R
+import net.swiftzer.eric.twopanedemo.network.entities.Delivery
 import org.jetbrains.anko.bundleOf
 
 /**
@@ -48,8 +50,9 @@ class DeliveryDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Glide.with(this)
+        GlideApp.with(this)
                 .load(delivery.imageUrl)
+                .placeholder(R.drawable.image_placeholder)
                 .apply(RequestOptions.centerCropTransform())
                 .into(thumbnail)
         title.text = delivery.description

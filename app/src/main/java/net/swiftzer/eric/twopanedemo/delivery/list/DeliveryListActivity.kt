@@ -1,9 +1,14 @@
-package net.swiftzer.eric.twopanedemo
+package net.swiftzer.eric.twopanedemo.delivery.list
 
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.delivery_list_activity.*
+import net.swiftzer.eric.twopanedemo.BaseActivity
+import net.swiftzer.eric.twopanedemo.R
+import net.swiftzer.eric.twopanedemo.delivery.detail.DeliveryDetailActivity
+import net.swiftzer.eric.twopanedemo.delivery.detail.DeliveryDetailFragment
+import net.swiftzer.eric.twopanedemo.network.entities.Delivery
 
 /**
  * An activity representing a list of Pings. This activity

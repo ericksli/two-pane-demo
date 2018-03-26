@@ -2,9 +2,9 @@ package net.swiftzer.eric.twopanedemo.di.components
 
 import dagger.BindsInstance
 import dagger.Subcomponent
-import net.swiftzer.eric.twopanedemo.DeliveryListActivity
-import net.swiftzer.eric.twopanedemo.DeliveryListFragment
-import net.swiftzer.eric.twopanedemo.DeliveryListViewModel
+import net.swiftzer.eric.twopanedemo.delivery.list.DeliveryListActivity
+import net.swiftzer.eric.twopanedemo.delivery.list.DeliveryListFragment
+import net.swiftzer.eric.twopanedemo.delivery.list.DeliveryListViewModel
 import net.swiftzer.eric.twopanedemo.di.scopes.ActivityScope
 
 /**

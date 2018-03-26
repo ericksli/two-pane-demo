@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".DeliveryListActivity"
+            android:name=".delivery.list.DeliveryListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -30,13 +30,13 @@
         </activity>
 
         <activity
-            android:name=".DeliveryDetailActivity"
+            android:name=".delivery.detail.DeliveryDetailActivity"
             android:label="@string/delivery_list_title"
-            android:parentActivityName=".DeliveryListActivity"
+            android:parentActivityName=".delivery.list.DeliveryListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.swiftzer.eric.twopanedemo.DeliveryListActivity"/>
+                android:value="net.swiftzer.eric.twopanedemo.delivery.list.DeliveryListActivity"/>
         </activity>
 
         <meta-data

@@ -1,13 +1,14 @@
-package net.swiftzer.eric.twopanedemo
+package net.swiftzer.eric.twopanedemo.delivery.list
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.delivery_list_item.*
+import net.swiftzer.eric.twopanedemo.GlideApp
+import net.swiftzer.eric.twopanedemo.R
+import net.swiftzer.eric.twopanedemo.network.entities.Delivery
 
 /**
  * Created by Eric on 3/25/2018.
@@ -42,9 +43,10 @@ class DeliveryViewHolder(
     }
 
     fun bind(delivery: Delivery) {
-        Glide.with(itemView)
+        GlideApp.with(itemView)
                 .load(delivery.imageUrl)
-                .apply(RequestOptions.centerCropTransform())
+                .placeholder(R.drawable.image_placeholder)
+                .centerCrop()
                 .into(thumbnail)
         title.text = delivery.description
         itemView.tag = delivery

@@ -1,4 +1,4 @@
-package net.swiftzer.eric.twopanedemo
+package net.swiftzer.eric.twopanedemo.delivery.list
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
@@ -8,6 +8,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import net.swiftzer.eric.twopanedemo.network.DeliveryApi
+import net.swiftzer.eric.twopanedemo.network.entities.Delivery
 import timber.log.Timber
 
 /**

@@ -1,4 +1,4 @@
-package net.swiftzer.eric.twopanedemo
+package net.swiftzer.eric.twopanedemo.network.entities
 
 import android.annotation.SuppressLint
 import android.os.Parcelable

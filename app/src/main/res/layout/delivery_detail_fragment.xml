@@ -5,7 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.swiftzer.eric.twopanedemo.DeliveryDetailFragment">
+    tools:context="net.swiftzer.eric.twopanedemo.delivery.detail.DeliveryDetailFragment">
 
     <fragment
         android:id="@+id/map"
