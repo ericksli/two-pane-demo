@@ -19,6 +19,7 @@ import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.delivery_detail_fragment.*
 import net.swiftzer.eric.twopanedemo.GlideApp
 import net.swiftzer.eric.twopanedemo.R
+import net.swiftzer.eric.twopanedemo.delivery.list.DeliveryListActivity
 import net.swiftzer.eric.twopanedemo.network.entities.Delivery
 import org.jetbrains.anko.bundleOf
 

@@ -16,7 +16,7 @@ import net.swiftzer.eric.twopanedemo.db.entities.CachedDelivery
 )
 abstract class CacheDb : RoomDatabase() {
     companion object {
-        fun create(context: Context, useInMemory:Boolean): CacheDb {
+        fun create(context: Context, useInMemory: Boolean): CacheDb {
             val databaseBuilder = if (useInMemory) {
                 Room.inMemoryDatabaseBuilder(context, CacheDb::class.java)
             } else {
@@ -26,5 +26,5 @@ abstract class CacheDb : RoomDatabase() {
         }
     }
 
-    abstract fun deliveries() : DeliveryDao
+    abstract fun deliveries(): DeliveryDao
 }

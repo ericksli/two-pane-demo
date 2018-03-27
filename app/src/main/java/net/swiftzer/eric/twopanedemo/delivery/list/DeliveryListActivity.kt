@@ -1,14 +1,20 @@
 package net.swiftzer.eric.twopanedemo.delivery.list
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.delivery_list_activity.*
 import net.swiftzer.eric.twopanedemo.BaseActivity
 import net.swiftzer.eric.twopanedemo.R
+import net.swiftzer.eric.twopanedemo.TwoPaneApplication
+import net.swiftzer.eric.twopanedemo.db.DeliveryDao
 import net.swiftzer.eric.twopanedemo.delivery.detail.DeliveryDetailActivity
 import net.swiftzer.eric.twopanedemo.delivery.detail.DeliveryDetailFragment
 import net.swiftzer.eric.twopanedemo.network.entities.Delivery
+import net.swiftzer.eric.twopanedemo.viewModelOf
+import org.jetbrains.anko.toast
+import javax.inject.Inject
 
 /**
  * An activity representing a list of Pings. This activity
@@ -25,8 +31,21 @@ class DeliveryListActivity : BaseActivity() {
      */
     private var twoPane: Boolean = false
 
+    @Inject
+    internal lateinit var deliveryDao: DeliveryDao
+
+    private lateinit var viewModel: DeliveryListActivityViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val component = TwoPaneApplication.instance.appComponent
+                .deliveryBuilder()
+                .build()
+        component.inject(this)
+
+        viewModel = viewModelOf(DeliveryListActivityViewModel.Factory(deliveryDao))
+
         setContentView(R.layout.delivery_list_activity)
 
         // The detail container view will be present only in the
@@ -46,6 +65,12 @@ class DeliveryListActivity : BaseActivity() {
             val listFragment = supportFragmentManager.findFragmentById(R.id.listContainer) as DeliveryListFragment
             listFragment.onItemClickedCallback = this::onDeliverySelected
         }
+
+        viewModel.clearCacheLiveData.observe(this, Observer {
+            it?.let {
+                toast(R.string.delivery_list_clear_cache_success)
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -55,6 +80,7 @@ class DeliveryListActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.clearCache -> {
+            viewModel.clearLocalCache()
             true
         }
         else -> super.onOptionsItemSelected(item)

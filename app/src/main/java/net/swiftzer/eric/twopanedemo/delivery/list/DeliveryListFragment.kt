@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.delivery_list_fragment.*
 import net.swiftzer.eric.twopanedemo.LinearSpacingItemDecoration
 import net.swiftzer.eric.twopanedemo.R
 import net.swiftzer.eric.twopanedemo.TwoPaneApplication
+import net.swiftzer.eric.twopanedemo.db.DeliveryDao
 import net.swiftzer.eric.twopanedemo.network.DeliveryApi
 import net.swiftzer.eric.twopanedemo.network.entities.Delivery
 import net.swiftzer.eric.twopanedemo.viewModelOf
@@ -29,6 +30,8 @@ class DeliveryListFragment : Fragment() {
 
     @Inject
     internal lateinit var deliveryApi: DeliveryApi
+    @Inject
+    internal lateinit var deliveryDao: DeliveryDao
     private lateinit var viewModel: DeliveryListViewModel
 
     var onItemClickedCallback: (delivery: Delivery) -> Unit = {}
@@ -39,11 +42,10 @@ class DeliveryListFragment : Fragment() {
 
         val component = TwoPaneApplication.instance.appComponent
                 .deliveryBuilder()
-                .deliveryListFragment(this)
                 .build()
         component.inject(this)
 
-        viewModel = viewModelOf(DeliveryListViewModel.Factory(deliveryApi))
+        viewModel = viewModelOf(DeliveryListViewModel.Factory(deliveryApi, deliveryDao))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -52,11 +54,7 @@ class DeliveryListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.listLiveData.observe(this, Observer { newList ->
-            newList?.let { updateList(it) }
-        })
-
-        adapter = DeliveryListAdapter(emptyList(), onItemClickedCallback)
+        adapter = DeliveryListAdapter(onItemClickedCallback)
         with(recyclerView) {
             adapter = this@DeliveryListFragment.adapter
             layoutManager = LinearLayoutManager(this@DeliveryListFragment.context)
@@ -71,10 +69,13 @@ class DeliveryListFragment : Fragment() {
             )
         }
 
-        viewModel.loadDelivery()
+        viewModel.listLiveData.observe(this, Observer(adapter::submitList))
+
+
+//        viewModel.loadDelivery()
     }
 
     private fun updateList(newList: List<Delivery>) {
-        adapter.update(newList)
+//        adapter.update(newList)
     }
 }

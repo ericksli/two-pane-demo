@@ -4,6 +4,7 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import net.swiftzer.eric.twopanedemo.di.modules.AppModule
+import net.swiftzer.eric.twopanedemo.di.modules.DbModule
 import net.swiftzer.eric.twopanedemo.di.modules.NetworkModule
 import javax.inject.Singleton
 
@@ -11,7 +12,7 @@ import javax.inject.Singleton
  * Created by Eric on 3/25/2018.
  */
 @Singleton
-@Component(modules = [AppModule::class, NetworkModule::class])
+@Component(modules = [AppModule::class, NetworkModule::class, DbModule::class])
 interface AppComponent {
     fun deliveryBuilder(): DeliveryComponent.Builder
 

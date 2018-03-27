@@ -1,6 +1,5 @@
 package net.swiftzer.eric.twopanedemo.di.components
 
-import dagger.BindsInstance
 import dagger.Subcomponent
 import net.swiftzer.eric.twopanedemo.delivery.list.DeliveryListActivity
 import net.swiftzer.eric.twopanedemo.delivery.list.DeliveryListFragment
@@ -21,7 +20,6 @@ interface DeliveryComponent {
     interface Builder {
         fun build(): DeliveryComponent
 
-        @BindsInstance
-        fun deliveryListFragment(fragment: DeliveryListFragment): Builder
+//        fun deliveryListFragment(fragment: DeliveryListFragment): Builder
     }
 }

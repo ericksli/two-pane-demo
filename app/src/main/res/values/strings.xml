@@ -3,6 +3,7 @@
 
     <string name="delivery_list_title">Things to Deliver</string>
     <string name="delivery_list_clear_cache">Clear cache</string>
+    <string name="delivery_list_clear_cache_success">Clear cache success! Restart the app to see the difference.</string>
 
     <string name="delivery_details_title">Delivery Details</string>
 </resources>

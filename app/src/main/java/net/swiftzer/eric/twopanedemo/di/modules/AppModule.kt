@@ -2,6 +2,7 @@ package net.swiftzer.eric.twopanedemo.di.modules
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
 
@@ -11,5 +12,5 @@ import dagger.Provides
 @Module
 class AppModule {
     @Provides
-    fun provideSharedPreferences(application: Application) = application.getSharedPreferences("test", Context.MODE_PRIVATE)
+    fun provideSharedPreferences(application: Application): SharedPreferences = application.getSharedPreferences("test", Context.MODE_PRIVATE)
 }
