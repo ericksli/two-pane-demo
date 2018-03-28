@@ -1,32 +1,41 @@
 package net.swiftzer.eric.twopanedemo.delivery.list
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
 import io.reactivex.disposables.CompositeDisposable
 import net.swiftzer.eric.twopanedemo.DELIVERY_LIST_RESPONSE_PER_PAGE
 import net.swiftzer.eric.twopanedemo.db.DeliveryDao
 import net.swiftzer.eric.twopanedemo.db.entities.CachedDelivery
+import net.swiftzer.eric.twopanedemo.delivery.DeliveryListRepository
 import net.swiftzer.eric.twopanedemo.network.DeliveryApi
+import timber.log.Timber
 
 /**
  * Created by eric on 26/3/2018.
  */
 class DeliveryListViewModel(
-        private val deliveryApi: DeliveryApi,
+        deliveryApi: DeliveryApi,
         deliveryDao: DeliveryDao
 ) : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
-    val listLiveData: LiveData<PagedList<CachedDelivery>>
+    private val repository: DeliveryListRepository
+    var listLiveData: LiveData<PagedList<CachedDelivery>> = MutableLiveData()
 
     init {
-        val pagedListConfig = PagedList.Config.Builder()
-                .setEnablePlaceholders(true)
-                .setPageSize(DELIVERY_LIST_RESPONSE_PER_PAGE)
-                .build()
-        listLiveData = LivePagedListBuilder(deliveryDao.getDeliveries(), pagedListConfig).build()
+        repository = DeliveryListRepository(deliveryApi, compositeDisposable)
+//        val pagedListConfig = PagedList.Config.Builder()
+//                .setEnablePlaceholders(true)
+//                .setPageSize(DELIVERY_LIST_RESPONSE_PER_PAGE)
+//                .build()
+//        listLiveData = LivePagedListBuilder(deliveryDao.getDeliveries(), pagedListConfig).build()
+    }
+
+    fun loadDeliveries() {
+        Timber.d("loadDeliveries() called")
+        listLiveData = repository.loadDeliveries(DELIVERY_LIST_RESPONSE_PER_PAGE)
     }
 
 //    fun loadDelivery(offset: Int = 0) {

@@ -71,8 +71,7 @@ class DeliveryListFragment : Fragment() {
 
         viewModel.listLiveData.observe(this, Observer(adapter::submitList))
 
-
-//        viewModel.loadDelivery()
+        viewModel.loadDeliveries()
     }
 
     private fun updateList(newList: List<Delivery>) {

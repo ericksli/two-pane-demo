@@ -10,5 +10,5 @@ import retrofit2.http.Query
  */
 interface DeliveryApi {
     @GET("deliveries")
-    fun deliveries(@Query("offset") offset: Int): Single<List<Delivery>>
+    fun deliveries(@Query("offset") offset: Int? = null): Single<List<Delivery>>
 }
