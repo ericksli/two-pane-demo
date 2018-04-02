@@ -2,6 +2,8 @@
     <string name="app_name">Two Pane Demo</string>
 
     <string name="delivery_list_title">Things to Deliver</string>
+    <string name="delivery_list_load_error">Load error</string>
+    <string name="delivery_list_retry">Retry</string>
     <string name="delivery_list_clear_cache">Clear cache</string>
     <string name="delivery_list_clear_cache_success">Clear cache success! Restart the app to see the difference.</string>
 

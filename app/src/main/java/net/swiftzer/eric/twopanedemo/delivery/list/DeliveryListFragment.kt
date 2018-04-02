@@ -4,18 +4,17 @@ import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.delivery_list_fragment.*
-import net.swiftzer.eric.twopanedemo.LinearSpacingItemDecoration
-import net.swiftzer.eric.twopanedemo.R
-import net.swiftzer.eric.twopanedemo.TwoPaneApplication
+import net.swiftzer.eric.twopanedemo.*
 import net.swiftzer.eric.twopanedemo.db.DeliveryDao
 import net.swiftzer.eric.twopanedemo.network.DeliveryApi
 import net.swiftzer.eric.twopanedemo.network.entities.Delivery
-import net.swiftzer.eric.twopanedemo.viewModelOf
 import org.jetbrains.anko.support.v4.dimen
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -33,9 +32,11 @@ class DeliveryListFragment : Fragment() {
     @Inject
     internal lateinit var deliveryDao: DeliveryDao
     private lateinit var viewModel: DeliveryListViewModel
+    private lateinit var layoutManager: LinearLayoutManager
 
     var onItemClickedCallback: (delivery: Delivery) -> Unit = {}
     private lateinit var adapter: DeliveryListAdapter
+    private lateinit var scrollListener: EndlessRecyclerViewScrollListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,10 +55,16 @@ class DeliveryListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = DeliveryListAdapter(onItemClickedCallback)
+        layoutManager = LinearLayoutManager(this@DeliveryListFragment.context)
+        scrollListener = object : EndlessRecyclerViewScrollListener(layoutManager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                Timber.d("onLoadMore() called with: page = [$page], totalItemsCount = [$totalItemsCount], view = [$view]")
+            }
+        }
+        adapter = DeliveryListAdapter(onItemClickedCallback, this::onRetryCallback)
         with(recyclerView) {
             adapter = this@DeliveryListFragment.adapter
-            layoutManager = LinearLayoutManager(this@DeliveryListFragment.context)
+            layoutManager = this@DeliveryListFragment.layoutManager
             addItemDecoration(
                     LinearSpacingItemDecoration(
                             topEdgePadding = dimen(R.dimen.delivery_list_item_vertical_outer_margin),
@@ -67,14 +74,18 @@ class DeliveryListFragment : Fragment() {
                             verticalInnerSpacing = dimen(R.dimen.delivery_list_item_vertical_inner_margin)
                     )
             )
+            addOnScrollListener(scrollListener)
         }
 
-        viewModel.listLiveData.observe(this, Observer(adapter::submitList))
-
-        viewModel.loadDeliveries()
+        viewModel.listLiveData.observe(this, Observer { it?.let { adapter.submitList(it) } })
+        viewModel.loadDelivery(0)
     }
 
     private fun updateList(newList: List<Delivery>) {
 //        adapter.update(newList)
+    }
+
+    private fun onRetryCallback() {
+        Timber.d("onRetryCallback() called")
     }
 }
