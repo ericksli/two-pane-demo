@@ -12,3 +12,13 @@ Once you obtained the key, create a new file *credentials.properties* for defini
 apiEndpoint=http://127.0.0.1:8080
 googleMapsApiKey=AIzaxxxxxxxxxxxxxxxxxxxxxxxx
 ```
+
+# Screenshots
+
+More screenshots are available in *screenshots* directory.
+
+![Two pane layout](screenshots/two-pane.png)
+
+![List page](screenshots/page-end-loading.png)
+
+![Detail page](screenshots/detail-page.png)
