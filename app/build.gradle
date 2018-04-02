@@ -59,7 +59,6 @@ dependencies {
 
     implementation "android.arch.lifecycle:extensions:$rootProject.ext.androidArchVersion"
     kapt "android.arch.lifecycle:compiler:$rootProject.ext.androidArchVersion"
-    implementation "android.arch.paging:runtime:$rootProject.ext.androidArchPagingVersion"
     implementation "android.arch.persistence.room:runtime:$rootProject.ext.androidArchRoomVersion"
     kapt "android.arch.persistence.room:compiler:$rootProject.ext.androidArchRoomVersion"
     implementation "android.arch.persistence.room:rxjava2:$rootProject.ext.androidArchRoomVersion"

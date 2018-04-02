@@ -9,19 +9,13 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import net.swiftzer.eric.twopanedemo.DELIVERY_LIST_RESPONSE_PER_PAGE
 import net.swiftzer.eric.twopanedemo.LoadingState
-import net.swiftzer.eric.twopanedemo.db.DeliveryDao
-import net.swiftzer.eric.twopanedemo.network.DeliveryApi
 import timber.log.Timber
 
 /**
  * Created by eric on 26/3/2018.
  */
-class DeliveryListViewModel(
-        deliveryApi: DeliveryApi,
-        deliveryDao: DeliveryDao
-) : ViewModel() {
+class DeliveryListViewModel(private val repository: DeliveryListRepository) : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
-    private val repository: DeliveryListRepository = DeliveryListRepository(deliveryApi, deliveryDao)
     val stateLiveData: MutableLiveData<DeliveryListState> = MutableLiveData()
 
     init {
@@ -75,10 +69,10 @@ class DeliveryListViewModel(
         compositeDisposable.clear()
     }
 
-    class Factory(private val deliveryApi: DeliveryApi, private val deliveryDao: DeliveryDao) : ViewModelProvider.Factory {
+    class Factory(private val repository: DeliveryListRepository) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            val viewModel = DeliveryListViewModel(deliveryApi, deliveryDao)
+            val viewModel = DeliveryListViewModel(repository)
             return viewModel as T
         }
     }

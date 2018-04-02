@@ -8,7 +8,6 @@ import kotlinx.android.synthetic.main.delivery_list_activity.*
 import net.swiftzer.eric.twopanedemo.BaseActivity
 import net.swiftzer.eric.twopanedemo.R
 import net.swiftzer.eric.twopanedemo.TwoPaneApplication
-import net.swiftzer.eric.twopanedemo.db.DeliveryDao
 import net.swiftzer.eric.twopanedemo.delivery.detail.DeliveryDetailActivity
 import net.swiftzer.eric.twopanedemo.delivery.detail.DeliveryDetailFragment
 import net.swiftzer.eric.twopanedemo.network.entities.Delivery
@@ -32,8 +31,7 @@ class DeliveryListActivity : BaseActivity() {
     private var twoPane: Boolean = false
 
     @Inject
-    internal lateinit var deliveryDao: DeliveryDao
-
+    internal lateinit var deliveryListRepository: DeliveryListRepository
     private lateinit var viewModel: DeliveryListActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +42,7 @@ class DeliveryListActivity : BaseActivity() {
                 .build()
         component.inject(this)
 
-        viewModel = viewModelOf(DeliveryListActivityViewModel.Factory(deliveryDao))
+        viewModel = viewModelOf(DeliveryListActivityViewModel.Factory(deliveryListRepository))
 
         setContentView(R.layout.delivery_list_activity)
 

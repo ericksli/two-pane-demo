@@ -10,8 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.delivery_list_fragment.*
 import net.swiftzer.eric.twopanedemo.*
-import net.swiftzer.eric.twopanedemo.db.DeliveryDao
-import net.swiftzer.eric.twopanedemo.network.DeliveryApi
 import net.swiftzer.eric.twopanedemo.network.entities.Delivery
 import org.jetbrains.anko.support.v4.dimen
 import timber.log.Timber
@@ -28,9 +26,7 @@ class DeliveryListFragment : Fragment() {
     }
 
     @Inject
-    internal lateinit var deliveryApi: DeliveryApi
-    @Inject
-    internal lateinit var deliveryDao: DeliveryDao
+    internal lateinit var deliveryListRepository: DeliveryListRepository
     private lateinit var viewModel: DeliveryListViewModel
     private lateinit var layoutManager: LinearLayoutManager
 
@@ -46,7 +42,7 @@ class DeliveryListFragment : Fragment() {
                 .build()
         component.inject(this)
 
-        viewModel = viewModelOf(DeliveryListViewModel.Factory(deliveryApi, deliveryDao))
+        viewModel = viewModelOf(DeliveryListViewModel.Factory(deliveryListRepository))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
