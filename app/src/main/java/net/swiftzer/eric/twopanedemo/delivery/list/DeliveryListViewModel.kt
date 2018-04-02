@@ -7,8 +7,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
+import net.swiftzer.eric.twopanedemo.DELIVERY_LIST_RESPONSE_PER_PAGE
+import net.swiftzer.eric.twopanedemo.LoadingState
 import net.swiftzer.eric.twopanedemo.db.DeliveryDao
-import net.swiftzer.eric.twopanedemo.db.entities.CachedDelivery
 import net.swiftzer.eric.twopanedemo.delivery.DeliveryListRepository
 import net.swiftzer.eric.twopanedemo.network.DeliveryApi
 import timber.log.Timber
@@ -22,34 +23,50 @@ class DeliveryListViewModel(
 ) : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
     private val repository: DeliveryListRepository
-    var listLiveData: MutableLiveData<List<CachedDelivery>> = MutableLiveData()
+    val stateLiveData: MutableLiveData<DeliveryListState> = MutableLiveData()
 
     init {
         repository = DeliveryListRepository(deliveryApi, compositeDisposable)
-//        val pagedListConfig = PagedList.Config.Builder()
-//                .setEnablePlaceholders(true)
-//                .setPageSize(DELIVERY_LIST_RESPONSE_PER_PAGE)
-//                .build()
-//        listLiveData = LivePagedListBuilder(deliveryDao.getDeliveries(), pagedListConfig).build()
+        stateLiveData.value = DeliveryListState()
     }
 
-    fun loadDeliveries() {
-        Timber.d("loadDeliveries() called")
-//        listLiveData = repository.loadDeliveries(DELIVERY_LIST_RESPONSE_PER_PAGE)
-    }
+    fun loadDelivery() {
+        val prevState = stateLiveData.value ?: DeliveryListState()
 
-    fun loadDelivery(offset: Int = 0) {
-        compositeDisposable += deliveryApi.deliveries(offset)
+        if (prevState.loadingState == LoadingState.LOADING && prevState.offset != 0) {
+            Timber.d("loadDelivery: loading offset %d now, skip", prevState.offset)
+            return
+        }
+        if (prevState.endOfList) {
+            Timber.d("loadDelivery: end of list already, skip")
+            return
+        }
+        Timber.d("loadDelivery: load offset %d", prevState.offset)
+
+        stateLiveData.postValue(prevState.copy(offset = prevState.offset, loadingState = LoadingState.LOADING))
+        compositeDisposable += deliveryApi.deliveries(prevState.offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Timber.d("loadDelivery: success %s", it)
+                    Timber.d("loadDelivery: success")
                     val cachedDeliveries = it.mapIndexed { index, delivery -> delivery.toCachedDelivery(index + 1) }
-                    val newList = listLiveData.value?.let { it + cachedDeliveries }
-                            ?: kotlin.run { cachedDeliveries }
-                    listLiveData.postValue(newList)
+                    val oldState = stateLiveData.value ?: DeliveryListState()
+                    val newList = oldState.itemList + cachedDeliveries
+                    val offset = if (prevState.offset == 0) {
+                        DELIVERY_LIST_RESPONSE_PER_PAGE + 1
+                    } else {
+                        prevState.offset + DELIVERY_LIST_RESPONSE_PER_PAGE
+                    }
+                    stateLiveData.postValue(oldState.copy(
+                            itemList = newList,
+                            loadingState = LoadingState.SUCCESS,
+                            offset = offset,
+                            endOfList = it.size < DELIVERY_LIST_RESPONSE_PER_PAGE
+                    ))
                 }, { e ->
                     Timber.e(e, "loadDelivery: error")
+                    val oldState = stateLiveData.value ?: DeliveryListState()
+                    stateLiveData.postValue(oldState.copy(loadingState = LoadingState.FAIL))
                 })
     }
 

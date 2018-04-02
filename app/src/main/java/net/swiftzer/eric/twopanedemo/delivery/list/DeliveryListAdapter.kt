@@ -20,6 +20,10 @@ class DeliveryListAdapter(
         private val onRetryCallback: () -> Unit
 ) : EndlessScrollRecyclerViewAdapter<CachedDelivery, RecyclerView.ViewHolder>() {
 
+    init {
+        setHasStableIds(true)
+    }
+
     override fun getItemViewType(position: Int): Int = when {
         isLoadingItem(position) -> LoadingViewHolder.LAYOUT_ID
         else -> DeliveryViewHolder.LAYOUT_ID
@@ -49,13 +53,7 @@ class DeliveryListAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is DeliveryViewHolder -> holder.bind(itemList[position])
-            is LoadingViewHolder -> holder.bind(true)
-        }
-    }
-
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        when (holder) {
-            is DeliveryViewHolder -> holder.clear()
+            is LoadingViewHolder -> holder.bind(endItemShowLoading)
         }
     }
 
@@ -73,7 +71,6 @@ class DeliveryViewHolder(
     }
 
     fun bind(delivery: CachedDelivery) {
-        cardView.visible()
         GlideApp.with(itemView)
                 .load(delivery.imageUrl)
                 .placeholder(R.drawable.image_placeholder)
@@ -82,11 +79,6 @@ class DeliveryViewHolder(
         title.text = delivery.description
         itemView.tag = delivery
         itemView.setOnClickListener(this)
-    }
-
-    fun clear() {
-        cardView.gone()
-        GlideApp.with(itemView).clear(thumbnail)
     }
 
     override fun onClick(v: View) {

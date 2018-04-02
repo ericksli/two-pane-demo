@@ -55,10 +55,21 @@ class DeliveryListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initViews()
+
+        viewModel.stateLiveData.observe(this, Observer(this::onStateChanged))
+
+        if (savedInstanceState == null) {
+            viewModel.loadDelivery()
+        }
+    }
+
+    private fun initViews() {
         layoutManager = LinearLayoutManager(this@DeliveryListFragment.context)
         scrollListener = object : EndlessRecyclerViewScrollListener(layoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 Timber.d("onLoadMore() called with: page = [$page], totalItemsCount = [$totalItemsCount], view = [$view]")
+                viewModel.loadDelivery()
             }
         }
         adapter = DeliveryListAdapter(onItemClickedCallback, this::onRetryCallback)
@@ -76,16 +87,46 @@ class DeliveryListFragment : Fragment() {
             )
             addOnScrollListener(scrollListener)
         }
-
-        viewModel.listLiveData.observe(this, Observer { it?.let { adapter.submitList(it) } })
-        viewModel.loadDelivery(0)
+        retryBtn.setOnClickListener { onRetryCallback() }
     }
 
-    private fun updateList(newList: List<Delivery>) {
-//        adapter.update(newList)
+    private fun onStateChanged(newState: DeliveryListState?) {
+        Timber.d("onStateChanged() called with: offset = [${newState?.offset}], list size = [${newState?.itemList?.size}], endOfList = [${newState?.endOfList}]")
+        newState?.let {
+            if (it.offset == 0) {
+                when (it.loadingState) {
+                    LoadingState.LOADING -> {
+                        recyclerView.gone()
+                        progressBar.visible()
+                        errorGroup.gone()
+                    }
+                    LoadingState.SUCCESS -> {
+                        recyclerView.visible()
+                        progressBar.gone()
+                        errorGroup.gone()
+                    }
+                    LoadingState.FAIL -> {
+                        recyclerView.gone()
+                        progressBar.gone()
+                        errorGroup.visible()
+                    }
+                }
+            } else {
+                recyclerView.visible()
+                progressBar.gone()
+                errorGroup.gone()
+            }
+
+            adapter.submitList(
+                    newList = it.itemList,
+                    loadingState = it.loadingState,
+                    endOfList = it.endOfList
+            )
+        }
     }
 
     private fun onRetryCallback() {
         Timber.d("onRetryCallback() called")
+        viewModel.loadDelivery()
     }
 }
