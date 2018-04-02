@@ -8,11 +8,11 @@ import net.swiftzer.eric.twopanedemo.network.entities.DeliveryLocation
 @Entity(tableName = "deliveries")
 data class CachedDelivery(
         @PrimaryKey val id: Int,
-        val description: String,
-        val imageUrl: String,
-        val lat: Double,
-        val lng: Double,
-        val address: String
+        val description: String = "",
+        val imageUrl: String = "",
+        val lat: Double = 0.0,
+        val lng: Double = 0.0,
+        val address: String = ""
 ) {
     fun toDelivery(): Delivery {
         val location = DeliveryLocation(

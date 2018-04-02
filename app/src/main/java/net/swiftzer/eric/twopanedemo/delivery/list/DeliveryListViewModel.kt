@@ -10,7 +10,6 @@ import io.reactivex.schedulers.Schedulers
 import net.swiftzer.eric.twopanedemo.DELIVERY_LIST_RESPONSE_PER_PAGE
 import net.swiftzer.eric.twopanedemo.LoadingState
 import net.swiftzer.eric.twopanedemo.db.DeliveryDao
-import net.swiftzer.eric.twopanedemo.delivery.DeliveryListRepository
 import net.swiftzer.eric.twopanedemo.network.DeliveryApi
 import timber.log.Timber
 
@@ -18,15 +17,14 @@ import timber.log.Timber
  * Created by eric on 26/3/2018.
  */
 class DeliveryListViewModel(
-        private val deliveryApi: DeliveryApi,
-        private val deliveryDao: DeliveryDao
+        deliveryApi: DeliveryApi,
+        deliveryDao: DeliveryDao
 ) : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
-    private val repository: DeliveryListRepository
+    private val repository: DeliveryListRepository = DeliveryListRepository(deliveryApi, deliveryDao)
     val stateLiveData: MutableLiveData<DeliveryListState> = MutableLiveData()
 
     init {
-        repository = DeliveryListRepository(deliveryApi, compositeDisposable)
         stateLiveData.value = DeliveryListState()
     }
 
@@ -44,14 +42,13 @@ class DeliveryListViewModel(
         Timber.d("loadDelivery: load offset %d", prevState.offset)
 
         stateLiveData.postValue(prevState.copy(offset = prevState.offset, loadingState = LoadingState.LOADING))
-        compositeDisposable += deliveryApi.deliveries(prevState.offset)
+        compositeDisposable += repository.loadDeliveries(prevState.offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Timber.d("loadDelivery: success")
-                    val cachedDeliveries = it.mapIndexed { index, delivery -> delivery.toCachedDelivery(index + 1) }
+                    Timber.d("loadDelivery: success, size = ${it.size}")
                     val oldState = stateLiveData.value ?: DeliveryListState()
-                    val newList = oldState.itemList + cachedDeliveries
+                    val newList = oldState.itemList + it
                     val offset = if (prevState.offset == 0) {
                         DELIVERY_LIST_RESPONSE_PER_PAGE + 1
                     } else {
@@ -66,7 +63,10 @@ class DeliveryListViewModel(
                 }, { e ->
                     Timber.e(e, "loadDelivery: error")
                     val oldState = stateLiveData.value ?: DeliveryListState()
-                    stateLiveData.postValue(oldState.copy(loadingState = LoadingState.FAIL))
+                    stateLiveData.postValue(oldState.copy(
+                            loadingState = LoadingState.FAIL,
+                            endOfList = false
+                    ))
                 })
     }
 

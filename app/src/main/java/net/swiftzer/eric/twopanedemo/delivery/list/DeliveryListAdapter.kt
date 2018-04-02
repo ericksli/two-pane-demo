@@ -24,19 +24,19 @@ class DeliveryListAdapter(
         setHasStableIds(true)
     }
 
-    override fun getItemViewType(position: Int): Int = when {
-        isLoadingItem(position) -> LoadingViewHolder.LAYOUT_ID
-        else -> DeliveryViewHolder.LAYOUT_ID
-    }
+    override fun getItemViewType(position: Int): Int =
+            if (itemList[position].id.toLong() == loadingItemId) {
+                LoadingViewHolder.LAYOUT_ID
+            } else {
+                DeliveryViewHolder.LAYOUT_ID
+            }
 
     override val loadingItemId: Long
         get() = -9999L
 
-    override fun getItemId(position: Int): Long = if (isLoadingItem(position)) {
-        loadingItemId
-    } else {
-        itemList[position].id.toLong()
-    }
+    override fun getLoadingItem(): CachedDelivery = CachedDelivery(id = loadingItemId.toInt())
+
+    override fun getItemId(position: Int): Long = itemList[position].id.toLong()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
         LoadingViewHolder.LAYOUT_ID -> {

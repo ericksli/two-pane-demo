@@ -62,6 +62,7 @@ dependencies {
     implementation "android.arch.paging:runtime:$rootProject.ext.androidArchPagingVersion"
     implementation "android.arch.persistence.room:runtime:$rootProject.ext.androidArchRoomVersion"
     kapt "android.arch.persistence.room:compiler:$rootProject.ext.androidArchRoomVersion"
+    implementation "android.arch.persistence.room:rxjava2:$rootProject.ext.androidArchRoomVersion"
 
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.ext.rxJavaVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rootProject.ext.rxKotlinVersion"
