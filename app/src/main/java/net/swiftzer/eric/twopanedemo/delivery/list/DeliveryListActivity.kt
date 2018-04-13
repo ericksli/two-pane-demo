@@ -2,10 +2,10 @@ package net.swiftzer.eric.twopanedemo.delivery.list
 
 import android.arch.lifecycle.Observer
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.delivery_list_activity.*
-import net.swiftzer.eric.twopanedemo.BaseActivity
 import net.swiftzer.eric.twopanedemo.R
 import net.swiftzer.eric.twopanedemo.TwoPaneApplication
 import net.swiftzer.eric.twopanedemo.delivery.detail.DeliveryDetailActivity
@@ -23,7 +23,7 @@ import javax.inject.Inject
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-class DeliveryListActivity : BaseActivity() {
+class DeliveryListActivity : AppCompatActivity() {
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
