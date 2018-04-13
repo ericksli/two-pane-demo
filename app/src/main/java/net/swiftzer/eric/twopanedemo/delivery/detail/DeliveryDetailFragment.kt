@@ -37,6 +37,7 @@ class DeliveryDetailFragment : Fragment() {
         }
     }
 
+    /** Delivery item to be displayed */
     private lateinit var delivery: Delivery
     private val compositeDisposable = CompositeDisposable()
 
@@ -58,6 +59,8 @@ class DeliveryDetailFragment : Fragment() {
                 .into(thumbnail)
         title.text = delivery.description
 
+        // We need to wait for footer card and content view to layout first and also wait for
+        // map fragment ready so that we can setup the map
         compositeDisposable += Observables
                 .zip(
                         viewOnLayoutObservable(view),
@@ -66,6 +69,7 @@ class DeliveryDetailFragment : Fragment() {
                 )
                 .subscribe { (contentView, footerCardView, googleMap) ->
                     with(googleMap) {
+                        // Not to overlap with map controls as required by Google Maps SDK
                         setPadding(0, 0, 0, contentView.height - footerCardView.y.toInt())
                         val latLng = LatLng(delivery.location.lat, delivery.location.lng)
                         val marker = MarkerOptions().position(latLng).title(delivery.location.address)
@@ -75,6 +79,10 @@ class DeliveryDetailFragment : Fragment() {
                 }
     }
 
+    /**
+     * Create observable for [View.OnLayoutChangeListener] event.
+     * @param view view object to be observed
+     */
     private fun viewOnLayoutObservable(view: View) = Observable.create<View> { emitter ->
         view.doOnLayout {
             if (!emitter.isDisposed) {
@@ -84,6 +92,10 @@ class DeliveryDetailFragment : Fragment() {
         }
     }
 
+    /**
+     * Create observable for Google Map fragment.
+     * @see SupportMapFragment.getMapAsync
+     */
     private fun googleMapObservable() = Observable.create<GoogleMap> { emitter ->
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         /**

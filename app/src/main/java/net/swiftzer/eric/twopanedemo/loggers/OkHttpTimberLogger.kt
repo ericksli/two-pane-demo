@@ -4,7 +4,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 
 /**
- * Created by eric on 26/3/2018.
+ * Simple OkHttp logger uses [Timber] to log message.
  */
 class OkHttpTimberLogger : HttpLoggingInterceptor.Logger {
     override fun log(message: String?) {

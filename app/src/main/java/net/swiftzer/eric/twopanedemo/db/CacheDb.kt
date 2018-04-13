@@ -7,7 +7,7 @@ import android.content.Context
 import net.swiftzer.eric.twopanedemo.db.entities.CachedDelivery
 
 /**
- * Created by Eric on 3/26/2018.
+ * Database to store the cached delivery items.
  */
 @Database(
         entities = [CachedDelivery::class],
@@ -16,6 +16,9 @@ import net.swiftzer.eric.twopanedemo.db.entities.CachedDelivery
 )
 abstract class CacheDb : RoomDatabase() {
     companion object {
+        /**
+         * Create database instance.
+         */
         fun create(context: Context, useInMemory: Boolean): CacheDb {
             val databaseBuilder = if (useInMemory) {
                 Room.inMemoryDatabaseBuilder(context, CacheDb::class.java)
@@ -26,5 +29,9 @@ abstract class CacheDb : RoomDatabase() {
         }
     }
 
+    /**
+     * Obtain [DeliveryDao].
+     * @return DAO instance
+     */
     abstract fun deliveries(): DeliveryDao
 }

@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'org.jetbrains.dokka-android'
 
 def credentialsPropertiesFile = rootProject.file("credentials.properties")
 def credentialsProperties = new Properties()
@@ -81,4 +82,14 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
+
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "$buildDir/javadoc"
+    linkMapping {
+        dir = "src/main/java"
+        url = "https://github.com/ericksli/two-pane-demo/tree/master/app/src/main/java"
+        suffix = "#L"
+    }
 }
