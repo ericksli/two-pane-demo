@@ -2,7 +2,11 @@ package net.swiftzer.eric.twopanedemo
 
 import android.support.v7.util.DiffUtil
 
-abstract class DiffCallback<T>(
+
+/**
+ * Base class for implementing [DiffUtil.Callback].
+ */
+abstract class DiffCallback<out T>(
         protected val oldList: List<T>,
         protected val newList: List<T>
 ) : DiffUtil.Callback() {

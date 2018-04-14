@@ -7,7 +7,7 @@ import net.swiftzer.eric.twopanedemo.delivery.list.DeliveryListViewModel
 import net.swiftzer.eric.twopanedemo.di.scopes.ActivityScope
 
 /**
- * Created by eric on 26/3/2018.
+ * Delivery component.
  */
 @ActivityScope
 @Subcomponent()
@@ -19,7 +19,5 @@ interface DeliveryComponent {
     @Subcomponent.Builder
     interface Builder {
         fun build(): DeliveryComponent
-
-//        fun deliveryListFragment(fragment: DeliveryListFragment): Builder
     }
 }

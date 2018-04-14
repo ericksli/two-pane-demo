@@ -9,7 +9,7 @@ import net.swiftzer.eric.twopanedemo.di.modules.NetworkModule
 import javax.inject.Singleton
 
 /**
- * Created by Eric on 3/25/2018.
+ * App component.
  */
 @Singleton
 @Component(modules = [AppModule::class, NetworkModule::class, DbModule::class])

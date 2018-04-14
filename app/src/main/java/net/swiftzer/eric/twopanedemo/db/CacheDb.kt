@@ -18,6 +18,9 @@ abstract class CacheDb : RoomDatabase() {
     companion object {
         /**
          * Create database instance.
+         * @param context application context
+         * @param useInMemory in-memory DB is created when it is true
+         * @return Room database instance
          */
         fun create(context: Context, useInMemory: Boolean): CacheDb {
             val databaseBuilder = if (useInMemory) {

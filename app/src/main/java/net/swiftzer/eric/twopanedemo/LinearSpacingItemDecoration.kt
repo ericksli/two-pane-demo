@@ -6,14 +6,20 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 
 /**
- * Created by eric on 26/3/2018.
+ * [RecyclerView.ItemDecoration] for adding spaces between items with [LinearLayoutManager].
  */
 class LinearSpacingItemDecoration(
+        /** Top edge padding in pixel */
         private val topEdgePadding: Int = 0,
+        /** Right edge padding in pixel */
         private val rightEdgePadding: Int = 0,
+        /** Bottom edge padding in pixel */
         private val bottomEdgePadding: Int = 0,
+        /** Left edge padding in pixel */
         private val leftEdgePadding: Int = 0,
+        /** Horizontal spacing between items in pixel */
         private val horizontalInnerSpacing: Int = 0,
+        /** Vertical spacing between items in pixel */
         private val verticalInnerSpacing: Int = 0
 ) : RecyclerView.ItemDecoration() {
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {

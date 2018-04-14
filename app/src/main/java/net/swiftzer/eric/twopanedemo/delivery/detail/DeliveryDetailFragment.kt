@@ -52,6 +52,7 @@ class DeliveryDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Thumbnail
         GlideApp.with(this)
                 .load(delivery.imageUrl)
                 .placeholder(R.drawable.image_placeholder)

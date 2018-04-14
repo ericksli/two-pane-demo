@@ -8,7 +8,7 @@ import net.swiftzer.eric.twopanedemo.db.DeliveryDao
 import javax.inject.Singleton
 
 /**
- * Created by eric on 27/3/2018.
+ * Room DB module.
  */
 @Module
 class DbModule {

@@ -5,6 +5,10 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import net.swiftzer.eric.twopanedemo.db.entities.CachedDelivery
 
+
+/**
+ * Delivery list item in API server response.
+ */
 @SuppressLint("ParcelCreator")
 @Parcelize
 data class Delivery(
@@ -12,6 +16,10 @@ data class Delivery(
         val imageUrl: String = "",
         val location: DeliveryLocation = DeliveryLocation()
 ) : Parcelable {
+    /**
+     * Map to [CachedDelivery].
+     * @param id ID to be assigned
+     */
     fun toCachedDelivery(id: Int) = CachedDelivery(
             id = id,
             description = description,
@@ -23,6 +31,10 @@ data class Delivery(
 }
 
 
+/**
+ * Delivery location in API server response.
+ * @see Delivery
+ */
 @SuppressLint("ParcelCreator")
 @Parcelize
 data class DeliveryLocation(

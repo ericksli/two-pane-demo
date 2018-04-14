@@ -9,10 +9,11 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import net.swiftzer.eric.twopanedemo.DELIVERY_LIST_RESPONSE_PER_PAGE
 import net.swiftzer.eric.twopanedemo.LoadingState
+import net.swiftzer.eric.twopanedemo.db.entities.CachedDelivery
 import timber.log.Timber
 
 /**
- * Created by eric on 26/3/2018.
+ * View model for [DeliveryListFragment].
  */
 class DeliveryListViewModel(private val repository: DeliveryListRepository) : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
@@ -22,6 +23,9 @@ class DeliveryListViewModel(private val repository: DeliveryListRepository) : Vi
         stateLiveData.value = DeliveryListState()
     }
 
+    /**
+     * Trigger load delivery from [DeliveryListRepository].
+     */
     fun loadDelivery() {
         val prevState = stateLiveData.value ?: DeliveryListState()
 
@@ -35,33 +39,52 @@ class DeliveryListViewModel(private val repository: DeliveryListRepository) : Vi
         }
         Timber.d("loadDelivery: load offset %d", prevState.offset)
 
-        stateLiveData.postValue(prevState.copy(offset = prevState.offset, loadingState = LoadingState.LOADING))
+        stateLiveData.postValue(prevState.copy(
+                offset = prevState.offset,
+                loadingState = LoadingState.LOADING
+        ))
         compositeDisposable += repository.loadDeliveries(prevState.offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    Timber.d("loadDelivery: success, size = ${it.size}")
-                    val oldState = stateLiveData.value ?: DeliveryListState()
-                    val newList = oldState.itemList + it
-                    val offset = if (prevState.offset == 0) {
-                        DELIVERY_LIST_RESPONSE_PER_PAGE + 1
-                    } else {
-                        prevState.offset + DELIVERY_LIST_RESPONSE_PER_PAGE
-                    }
-                    stateLiveData.postValue(oldState.copy(
-                            itemList = newList,
-                            loadingState = LoadingState.SUCCESS,
-                            offset = offset,
-                            endOfList = it.size < DELIVERY_LIST_RESPONSE_PER_PAGE
-                    ))
-                }, { e ->
-                    Timber.e(e, "loadDelivery: error")
-                    val oldState = stateLiveData.value ?: DeliveryListState()
-                    stateLiveData.postValue(oldState.copy(
-                            loadingState = LoadingState.FAIL,
-                            endOfList = false
-                    ))
-                })
+                .subscribe(
+                        { onLoadDeliverySuccess(it, prevState.offset) },
+                        this::onLoadDeliveryError
+                )
+    }
+
+    /**
+     * Handle delivery list successfully loaded.
+     * @param deliveries list of cached delivery items
+     * @param prevOffset previous offset
+     */
+    private fun onLoadDeliverySuccess(deliveries: List<CachedDelivery>, prevOffset: Int) {
+        Timber.d("onLoadDeliverySuccess: size = %d", deliveries.size)
+        val oldState = stateLiveData.value ?: DeliveryListState()
+        val newList = oldState.itemList + deliveries
+        val offset = if (prevOffset == 0) {
+            DELIVERY_LIST_RESPONSE_PER_PAGE + 1
+        } else {
+            prevOffset + DELIVERY_LIST_RESPONSE_PER_PAGE
+        }
+        stateLiveData.postValue(oldState.copy(
+                itemList = newList,
+                loadingState = LoadingState.SUCCESS,
+                offset = offset,
+                endOfList = deliveries.size < DELIVERY_LIST_RESPONSE_PER_PAGE
+        ))
+    }
+
+    /**
+     * Handle delivery list error case.
+     * @param e throwable for causing this error
+     */
+    private fun onLoadDeliveryError(e: Throwable) {
+        Timber.e(e, "onLoadDeliveryError")
+        val oldState = stateLiveData.value ?: DeliveryListState()
+        stateLiveData.postValue(oldState.copy(
+                loadingState = LoadingState.FAIL,
+                endOfList = false
+        ))
     }
 
     override fun onCleared() {
@@ -69,6 +92,9 @@ class DeliveryListViewModel(private val repository: DeliveryListRepository) : Vi
         compositeDisposable.clear()
     }
 
+    /**
+     * Factory for [DeliveryListViewModel].
+     */
     class Factory(private val repository: DeliveryListRepository) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {

@@ -16,7 +16,7 @@ import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 /**
- * An activity representing a list of Pings. This activity
+ * An activity representing a list of delivery items. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
  * lead to a [DeliveryDetailActivity] representing
@@ -84,6 +84,14 @@ class DeliveryListActivity : AppCompatActivity() {
         else -> super.onOptionsItemSelected(item)
     }
 
+    /**
+     * Callback when list item is selected by user.
+     *
+     * Start a new [DeliveryDetailActivity] when in small screen or show the
+     * [DeliveryDetailFragment] in two-pane mode.
+     *
+     * @param delivery the selected delivery item
+     */
     private fun onDeliverySelected(delivery: Delivery) {
         if (twoPane) {
             supportFragmentManager.beginTransaction()

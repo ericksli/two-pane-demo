@@ -13,7 +13,7 @@ import net.swiftzer.eric.twopanedemo.network.entities.Delivery
 import net.swiftzer.eric.twopanedemo.network.entities.DeliveryLocation
 
 /**
- * Created by Eric on 3/25/2018.
+ * Recycler view adapter for delivery list in [DeliveryListFragment].
  */
 class DeliveryListAdapter(
         private val onItemClickedCallback: (delivery: Delivery) -> Unit,
@@ -21,6 +21,7 @@ class DeliveryListAdapter(
 ) : EndlessScrollRecyclerViewAdapter<CachedDelivery, RecyclerView.ViewHolder>() {
 
     init {
+        // Cached items have ID
         setHasStableIds(true)
     }
 
@@ -62,6 +63,11 @@ class DeliveryListAdapter(
 }
 
 
+/**
+ * View holder for delivery list item.
+ * @param containerView item view
+ * @param onItemClickedCallback callback when item is clicked
+ */
 class DeliveryViewHolder(
         override val containerView: View?,
         private val onItemClickedCallback: (delivery: Delivery) -> Unit
@@ -70,6 +76,10 @@ class DeliveryViewHolder(
         const val LAYOUT_ID = R.layout.delivery_list_item
     }
 
+    /**
+     * Bind the view holder with [CachedDelivery].
+     * @param delivery item to render
+     */
     fun bind(delivery: CachedDelivery) {
         GlideApp.with(itemView)
                 .load(delivery.imageUrl)
@@ -81,6 +91,9 @@ class DeliveryViewHolder(
         itemView.setOnClickListener(this)
     }
 
+    /**
+     * Handle click event for the whole item.
+     */
     override fun onClick(v: View) {
         val cachedDelivery = v.tag as CachedDelivery
         val delivery = Delivery(
@@ -97,6 +110,11 @@ class DeliveryViewHolder(
 }
 
 
+/**
+ * View holder for loading item.
+ * @param containerView item view
+ * @param onRetryCallback callback when retry button is clicked
+ */
 class LoadingViewHolder(
         override val containerView: View?,
         private val onRetryCallback: () -> Unit
@@ -105,6 +123,10 @@ class LoadingViewHolder(
         const val LAYOUT_ID = R.layout.delivery_list_item_loading
     }
 
+    /**
+     * Bind the view holder with loading/error state.
+     * @param isLoading whether the list is loading
+     */
     fun bind(isLoading: Boolean) {
         if (isLoading) {
             progressBar.visible()
@@ -116,12 +138,20 @@ class LoadingViewHolder(
         retryBtn.setOnClickListener(this)
     }
 
+    /**
+     * Retry button click event handling.
+     */
     override fun onClick(v: View) {
         onRetryCallback()
     }
 }
 
 
+/**
+ * Recycler view diff callback for [CachedDelivery].
+ * @param oldList old list
+ * @param newList new list
+ */
 class CachedDeliveryDiffCallback(
         oldList: List<CachedDelivery>,
         newList: List<CachedDelivery>

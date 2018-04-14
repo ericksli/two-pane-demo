@@ -16,7 +16,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 /**
- * Created by Eric on 3/25/2018.
+ * Fragment shows the actual list of delivery items.
  */
 class DeliveryListFragment : Fragment() {
     companion object {
@@ -32,6 +32,7 @@ class DeliveryListFragment : Fragment() {
 
     var onItemClickedCallback: (delivery: Delivery) -> Unit = {}
     private lateinit var adapter: DeliveryListAdapter
+    /** Scroll listener for infinite scroll */
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,11 +61,14 @@ class DeliveryListFragment : Fragment() {
         }
     }
 
+    /**
+     * Set up views.
+     */
     private fun initViews() {
         layoutManager = LinearLayoutManager(this@DeliveryListFragment.context)
         scrollListener = object : EndlessRecyclerViewScrollListener(layoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                Timber.d("onLoadMore() called with: page = [$page], totalItemsCount = [$totalItemsCount], view = [$view]")
+                Timber.d("onLoadMore() called with: page = [%d], totalItemsCount = [%d]", page, totalItemsCount)
                 viewModel.loadDelivery()
             }
         }
@@ -86,8 +90,11 @@ class DeliveryListFragment : Fragment() {
         retryBtn.setOnClickListener { onRetryCallback() }
     }
 
+    /**
+     * Callback when state live data is changed.
+     * @param newState new state object
+     */
     private fun onStateChanged(newState: DeliveryListState?) {
-        Timber.d("onStateChanged() called with: offset = [${newState?.offset}], list size = [${newState?.itemList?.size}], endOfList = [${newState?.endOfList}]")
         newState?.let {
             if (it.offset == 0) {
                 when (it.loadingState) {
@@ -121,6 +128,9 @@ class DeliveryListFragment : Fragment() {
         }
     }
 
+    /**
+     * Callback when retry button is clicked.
+     */
     private fun onRetryCallback() {
         Timber.d("onRetryCallback() called")
         viewModel.loadDelivery()

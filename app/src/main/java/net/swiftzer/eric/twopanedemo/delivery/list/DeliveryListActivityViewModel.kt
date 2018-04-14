@@ -10,13 +10,16 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 /**
- * Created by eric on 27/3/2018.
+ * View model for [DeliveryListActivity].
  */
 class DeliveryListActivityViewModel(private val repository: DeliveryListRepository) : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
 
     val clearCacheLiveData = MutableLiveData<Boolean>()
 
+    /**
+     * Clear all cached data in DB.
+     */
     fun clearLocalCache() {
         Timber.d("clearLocalCache() called")
         compositeDisposable += repository.clearCache()
@@ -32,6 +35,9 @@ class DeliveryListActivityViewModel(private val repository: DeliveryListReposito
         compositeDisposable.dispose()
     }
 
+    /**
+     * Factory for instantiating [DeliveryListActivityViewModel].
+     */
     class Factory(private val repository: DeliveryListRepository) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {

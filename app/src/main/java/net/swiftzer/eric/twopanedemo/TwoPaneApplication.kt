@@ -7,7 +7,7 @@ import net.swiftzer.eric.twopanedemo.di.modules.NetworkModule
 import timber.log.Timber
 
 /**
- * Created by Eric on 3/25/2018.
+ * [Application] subclass for the app.
  */
 class TwoPaneApplication : Application() {
     companion object {

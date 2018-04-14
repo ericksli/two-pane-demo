@@ -14,7 +14,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 /**
- * Created by Eric on 3/25/2018.
+ * Network-related module.
  */
 @Module
 class NetworkModule(private val apiEndpoint: String) {
