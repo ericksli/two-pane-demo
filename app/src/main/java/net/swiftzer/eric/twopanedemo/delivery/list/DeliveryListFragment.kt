@@ -3,6 +3,7 @@ package net.swiftzer.eric.twopanedemo.delivery.list
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -18,7 +19,7 @@ import javax.inject.Inject
 /**
  * Fragment shows the actual list of delivery items.
  */
-class DeliveryListFragment : Fragment() {
+class DeliveryListFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     companion object {
         fun newInstance(onItemClickedCallback: (delivery: Delivery) -> Unit) = DeliveryListFragment().apply {
             this.onItemClickedCallback = onItemClickedCallback
@@ -65,11 +66,14 @@ class DeliveryListFragment : Fragment() {
      * Set up views.
      */
     private fun initViews() {
+        swipeRefreshLayout.setOnRefreshListener(this)
         layoutManager = LinearLayoutManager(this@DeliveryListFragment.context)
         scrollListener = object : EndlessRecyclerViewScrollListener(layoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 Timber.d("onLoadMore() called with: page = [%d], totalItemsCount = [%d]", page, totalItemsCount)
-                viewModel.loadDelivery()
+                if (page > 1) {
+                    viewModel.loadDelivery()
+                }
             }
         }
         adapter = DeliveryListAdapter(onItemClickedCallback, this::onRetryCallback)
@@ -95,6 +99,7 @@ class DeliveryListFragment : Fragment() {
      * @param newState new state object
      */
     private fun onStateChanged(newState: DeliveryListState?) {
+        Timber.d("onStateChanged() called with: newState = [$newState]")
         newState?.let {
             if (it.offset == 0) {
                 when (it.loadingState) {
@@ -107,11 +112,13 @@ class DeliveryListFragment : Fragment() {
                         recyclerView.visible()
                         progressBar.gone()
                         errorGroup.gone()
+                        swipeRefreshLayout.isRefreshing = false
                     }
                     LoadingState.FAIL -> {
                         recyclerView.gone()
                         progressBar.gone()
                         errorGroup.visible()
+                        swipeRefreshLayout.isRefreshing = false
                     }
                 }
             } else {
@@ -126,6 +133,11 @@ class DeliveryListFragment : Fragment() {
                     endOfList = it.endOfList
             )
         }
+    }
+
+    override fun onRefresh() {
+        Timber.d("onRefresh() called")
+        viewModel.refreshDelivery()
     }
 
     /**

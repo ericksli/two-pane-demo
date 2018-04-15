@@ -87,6 +87,16 @@ class DeliveryListViewModel(private val repository: DeliveryListRepository) : Vi
         ))
     }
 
+    fun refreshDelivery() {
+        stateLiveData.postValue(DeliveryListState())
+        compositeDisposable += repository.clearCache()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    loadDelivery()
+                }
+    }
+
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.clear()
